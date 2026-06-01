@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 public record ProductResponse(
         @Schema(description = "Product id", example = "1")
         Long id,
-        @Schema(description = "Product name", example = "Wireless Mouse")
+        @Schema(description = "Product name", example = "mouse")
         String name,
         @Schema(description = "Product description")
         String description,

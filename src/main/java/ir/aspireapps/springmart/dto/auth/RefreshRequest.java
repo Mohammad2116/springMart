@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Size;
 @Schema(name = "RefreshTokenRequest", description = "A refresh token sent by user")
 public record RefreshRequest(
         @Schema(description = "Refresh token that received at last transition to JWT",
-                example = "Very secure token like: kjfkdlskfsdffdd....")
+                example = "oWHhPYtOmUR9omRExe2dX7OC9L1DY_CqoE2Lp0aXj...")
         @NotBlank(message = "Refresh token value can't be empty")
         @Size(max = 500, message = "Refresh token value maximum size os 500 characters")
         String refreshToken

@@ -1,6 +1,7 @@
 package ir.aspireapps.springmart.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -42,8 +43,12 @@ public class ProductController {
     private final ProductService productService;
 
     @Operation(
-            summary = "Register Product",
-            description = "Register a new product into system."
+            summary = "Register",
+            description = """
+                    Register a new product into system.
+                    
+                    - ADMIN role required
+                    """
     )
     @ApiResponse(
             responseCode = "201",
@@ -51,15 +56,23 @@ public class ProductController {
     )
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public ResponseEntity<ProductResponse> register(@AuthenticationPrincipal CustomUserDetails userDetails,
-                                                    @Valid @RequestBody ProductRegisterRequest request) {
+    public ResponseEntity<ProductResponse> register(
+            @Parameter(
+                    description = "Product registration details"
+            )
+            @Valid @RequestBody ProductRegisterRequest request,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 productService.register(request, userDetails.getUsername()));
     }
 
     @Operation(
-            summary = "Update Product",
-            description = "Update product's details into system."
+            summary = "Update",
+            description = """
+                    Update product's details.
+                    
+                    - ADMIN role required
+                    """
     )
     @ApiResponse(
             responseCode = "200",
@@ -67,16 +80,28 @@ public class ProductController {
     )
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
-    public ResponseEntity<ProductResponse> update(@Positive @PathVariable Long id,
-                                                  @Valid @RequestBody ProductUpdateRequest request,
-                                                  @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<ProductResponse> update(
+            @Parameter(
+                    description = "ID of the target product to update details",
+                    example = "5"
+            )
+            @Positive @PathVariable Long id,
+            @Parameter(
+                    description = "Product new details"
+            )
+            @Valid @RequestBody ProductUpdateRequest request,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseEntity.status(HttpStatus.OK).body(
                 productService.update(id, userDetails.user().getId(), request));
     }
 
     @Operation(
-            summary = "Remove Product",
-            description = "Soft delete a product form system."
+            summary = "Remove",
+            description = """
+                        Soft delete a product form system.
+                        
+                        - ADMIN role required
+                        """
     )
     @ApiResponse(
             responseCode = "204",
@@ -84,30 +109,48 @@ public class ProductController {
     )
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@Positive @PathVariable Long id,
-                                       @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<Void> delete(
+            @Parameter(
+                    description = "ID of the target product to remove",
+                    example = "5"
+            )
+            @Positive @PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
         productService.delete(id, userDetails.user().getId());
         return ResponseEntity.noContent().build();
     }
 
     @Operation(
-            summary = "Retrieve a Product",
-            description = "Return details of a product."
+            summary = "Retrieve product details",
+            description = """
+                    Return details of a product.
+                    
+                    - ADMIN or USER role required
+                    """
     )
     @ApiResponse(
             responseCode = "200",
-            description = "Product details returened"
+            description = "Product details returned"
     )
     @GetMapping("/{id}")
-    public ResponseEntity<ProductResponse> get(@PathVariable Long id) {
+    public ResponseEntity<ProductResponse> get(
+            @Parameter(
+                    description = "ID of the target product to fetch it's details",
+                    example = "5"
+            )
+            @PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(
                 productService.find(id)
         );
     }
 
     @Operation(
-            summary = "Get All Products",
-            description = "Retrieve a paged list of products in system with no limitation."
+            summary = "Get all",
+            description = """
+                    Retrieve a paged list of products in system with no limitation.
+                    
+                    - ADMIN or USER role required
+                    """
     )
     @ApiResponse(
             responseCode = "200",
@@ -124,53 +167,83 @@ public class ProductController {
     }
 
     @Operation(
-            summary = "Get Products By Category",
-            description = "Retrieve a paged list of products in system that contains in the selected category."
+            summary = "Get products by category",
+            description = """
+                    Retrieve a paged list of products in system that contains in the selected category.
+                    - ADMIN or USER role required
+                    """
     )
     @ApiResponse(
             responseCode = "200",
             description = "List returned"
     )
     @GetMapping("/all/category/{categoryId}")
-    public ResponseEntity<Page<ProductResponse>> getByCategory(@Positive @PathVariable Long categoryId,
-                                                               @ParameterObject
-                                                               @PageableDefault(size = 10, sort = "name")
-                                                               Pageable pageable) {
+    public ResponseEntity<Page<ProductResponse>> getByCategory(
+            @Parameter(
+                    description = "ID of the target category to take query products",
+                    example = "5"
+            )
+            @Positive @PathVariable Long categoryId,
+            @ParameterObject
+            @PageableDefault(size = 10, sort = "name")
+            Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK).body(
                 productService.findAllByCategoryId(categoryId, pageable)
         );
     }
     @Operation(
-            summary = "Get Products By Name",
-            description = "Retrieve a paged list of products That their name contains a specific characters."
+            summary = "Get products by name",
+            description = """
+                    Retrieve a paged list of products That their name contains a specific characters.
+                    
+                    - ADMIN or USER role required
+                    """
     )
     @ApiResponse(
             responseCode = "200",
             description = "List returned"
     )
     @GetMapping("/all/name/{name}")
-    public ResponseEntity<Page<ProductResponse>> getByName(@Valid @PathVariable String name,
-                                                           @ParameterObject
-                                                           @PageableDefault(size = 10, sort = "name")
-                                                           Pageable pageable) {
+    public ResponseEntity<Page<ProductResponse>> getByName(
+            @Parameter(
+                    description = "Name of target product to search",
+                    example = "mouse"
+            )
+            @Valid @PathVariable String name,
+            @ParameterObject
+            @PageableDefault(size = 10, sort = "name")
+            Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK).body(
                 productService.findAllByName(name, pageable)
         );
     }
     @Operation(
-            summary = "Get Products By name and category",
-            description = "Retrieve a paged list of products with a defined name and category."
+            summary = "Get products by name and category",
+            description = """
+                    Retrieve a paged list of products with a defined name and category.
+                    
+                    - ADMIN or USER role required
+                    """
     )
     @ApiResponse(
             responseCode = "200",
             description = "List returned"
     )
     @GetMapping("/all/name/{name}/category/{categoryId}")
-    public ResponseEntity<Page<ProductResponse>> getByNameAndCategory(@NotBlank @PathVariable String name,
-                                                                      @NotNull @PathVariable Long categoryId,
-                                                                      @ParameterObject
-                                                                          @PageableDefault(size = 10, sort = "name")
-                                                                          Pageable pageable) {
+    public ResponseEntity<Page<ProductResponse>> getByNameAndCategory(
+            @Parameter(
+                    description = "Name of the target product to search for",
+                    example = "mouse"
+            )
+            @NotBlank @PathVariable String name,
+            @Parameter(
+                    description = "Name of the target category to search in",
+                    example = "Accessories"
+            )
+            @NotNull @PathVariable Long categoryId,
+            @ParameterObject
+            @PageableDefault(size = 10, sort = "name")
+            Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK).body(
                 productService.findAllByNameAndCategory(name, categoryId, pageable)
         );

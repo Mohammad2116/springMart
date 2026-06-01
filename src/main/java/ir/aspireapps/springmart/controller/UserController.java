@@ -1,6 +1,7 @@
 package ir.aspireapps.springmart.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -36,8 +37,12 @@ public class UserController {
     private final UserService userService;
 
     @Operation(
-            summary = "Get User",
-            description = "Retrieve details of a User account."
+            summary = "Get",
+            description = """
+                    Retrieve details of a User account.
+                    
+                    - ADMIN or USER role required
+                    """
     )
     @ApiResponse(
             responseCode = "200",
@@ -51,8 +56,12 @@ public class UserController {
     }
 
     @Operation(
-            summary = "Update User",
-            description = "Update details information of a User account."
+            summary = "Update",
+            description = """
+                    Update details information of a User account.
+                    
+                    - ADMIN or USER role required
+                    """
     )
     @ApiResponse(
             responseCode = "200",
@@ -60,15 +69,23 @@ public class UserController {
     )
     @PreAuthorize("hasAnyRole({'USER', 'ADMIN'})")
     @PutMapping("/me")
-    public ResponseEntity<UserResponse> update(@Valid @AuthenticationPrincipal UserDetails user,
-                                               @Valid @RequestBody UserUpdateDetailsRequest request) {
+    public ResponseEntity<UserResponse> update(
+            @Parameter(
+                    description = "User update details to process"
+            )
+            @Valid @RequestBody UserUpdateDetailsRequest request,
+            @Valid @AuthenticationPrincipal UserDetails user) {
         return ResponseEntity.status(HttpStatus.OK).body(
                 userService.update(user.getUsername(), request));
     }
 
     @Operation(
-            summary = "Set State",
-            description = "Set User account state to active or deactive."
+            summary = "Status",
+            description = """
+                    Set User account state to active or deactivate.
+                    
+                    - ADMIN role required
+                    """
     )
     @ApiResponse(
             responseCode = "200",
@@ -76,8 +93,17 @@ public class UserController {
     )
     @PreAuthorize("hasAnyRole({'ADMIN'})")
     @PutMapping("/{id}")
-    public ResponseEntity<Void> setStatus(@Valid @NotNull @PathVariable UUID id,
-                                          boolean newStatus) {
+    public ResponseEntity<Void> setStatus(
+            @Parameter(
+                    description = "ID of the target user to change it's status",
+                    example = "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+            )
+            @Valid @NotNull @PathVariable UUID id,
+            @Parameter(
+                    description = "Status of account activation(true/false)",
+                    example = "true"
+            )
+            boolean newStatus) {
         userService.setStatus(id, newStatus);
         return ResponseEntity.noContent().build();
     }

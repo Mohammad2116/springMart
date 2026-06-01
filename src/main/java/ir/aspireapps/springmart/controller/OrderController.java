@@ -1,6 +1,7 @@
 package ir.aspireapps.springmart.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,8 +33,12 @@ public class OrderController {
     private final OrderService orderService;
 
     @Operation(
-            summary = "Set to paid",
-            description = "Set the status of a order to paid"
+            summary = "Paid",
+            description = """
+                    Set the status of an order as PAID
+                    
+                    - ADMIN role required
+                    """
     )
     @ApiResponse(
             responseCode = "200",
@@ -41,31 +46,47 @@ public class OrderController {
     )
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/paid/{id}")
-    public ResponseEntity<OrderResponse> pay(@Valid @PathVariable long id,
-                                             @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<OrderResponse> paid(
+            @Parameter(
+                    description = "Id of the order who paid",
+                    example = "5"
+            )
+            @Valid @PathVariable long id,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseEntity.ok(orderService.paid(userDetails.user(), id));
     }
 
     @Operation(
-            summary = "Cancel Order",
-            description = "Set the status of a order to CANCELED - and convert it to as a calneled" +
-                    " Order, Only CREATED and PAYID orders can be canceled."
+            summary = "Cancel",
+            description = """
+                    Set the status of an order to CANCELED
+                    
+                    - ADMIN or USER role required
+                    """
     )
     @ApiResponse(
             responseCode = "200",
             description = "order state changed successfully"
     )
     @PutMapping("/cancel/{id}")
-    public ResponseEntity<Void> cancelOrder(@Valid @PathVariable long id,
-                                            @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<Void> cancelOrder(
+            @Parameter(
+                    description = "Id of the order who canceled",
+                    example = "5"
+            )
+            @Valid @PathVariable long id,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
         orderService.cancel(userDetails.user(), id);
         return ResponseEntity.accepted().build();
     }
 
     @Operation(
-            summary = "Ship Order",
-            description = "Set the status of a order to SHIPPED - and convert it to as a shiped" +
-                    " Order, Only PAYID orders can be set to SHIPPED."
+            summary = "Shipped",
+            description = """
+                    Set the status of an order to SHIPPED
+                    
+                    - ADMIN role required
+                    """
     )
     @ApiResponse(
             responseCode = "200",
@@ -73,73 +94,102 @@ public class OrderController {
     )
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/ship/{id}")
-    public ResponseEntity<Void> ship(@Valid @PathVariable long id,
+    public ResponseEntity<Void> ship(
+            @Parameter(
+                    description = "Id of the order who shipped",
+                    example = "5"
+            )
+            @Valid @PathVariable long id,
                                      @AuthenticationPrincipal CustomUserDetails userDetails) {
         orderService.ship(userDetails.user(), id);
         return ResponseEntity.accepted().build();
     }
 
     @Operation(
-            summary = "List Order",
-            description = "Retrieve list of all orders set by user in any state."
+            summary = "List orders",
+            description = """
+                    Retrieve a list of all orders set by user at any state.
+                    
+                    - ADMIN or USER role required
+                    """
     )
     @ApiResponse(
             responseCode = "200",
             description = "List returned"
     )
-    @GetMapping("/{id}")
+    @GetMapping()
     public ResponseEntity<List<OrderResponse>> listOrders(
             @AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseEntity.ok(orderService.getAll(userDetails.user()));
     }
 
     @Operation(
-            summary = "List Order",
-            description = "Retrieve list of all orders set by user at CONFIRMED state."
+            summary = "List confirmed orders",
+            description = """
+                    Retrieve a list of all orders set by user at CONFIRMED state.
+                    
+                    - ADMIN or USER role required
+                    """
     )
     @ApiResponse(
             responseCode = "200",
-            description = "List returned"
+            description = "List of confirmed orders returns"
     )
+    @GetMapping("/confirmed")
     public ResponseEntity<List<OrderResponse>> listOrdersConfirmed(
             @AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseEntity.ok(orderService.getAllConfirmed(userDetails.user()));
     }
 
     @Operation(
-            summary = "List Order",
-            description = "Retrieve list of all orders set by user at PAID state."
+            summary = "List paid orders",
+            description = """
+                    Retrieve a list of all orders set by user at PAID state.
+                    
+                    - ADMIN or USER role required
+                    """
     )
     @ApiResponse(
             responseCode = "200",
-            description = "List returned"
+            description = "List of paid orders returns"
     )
-    public ResponseEntity<List<OrderResponse>> listOrdersPayed(
+    @GetMapping("/paid")
+    public ResponseEntity<List<OrderResponse>> listOrdersPaid(
             @AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseEntity.ok(orderService.getAllPayed(userDetails.user()));
     }
 
     @Operation(
-            summary = "List Order",
-            description = "Retrieve list of all orders set by user at SHIPPED state."
+            summary = "List shipped orders",
+            description = """
+                    Retrieve a list of all orders set by user at SHIPPED state.
+                    
+                    - ADMIN or USER role required
+                    """
     )
     @ApiResponse(
             responseCode = "200",
-            description = "List returned"
+            description = "List of shipped orders returns"
     )
+    @GetMapping("/shipped")
     public ResponseEntity<List<OrderResponse>> listOrdersShipped(
             @AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseEntity.ok(orderService.getAllShip(userDetails.user()));
     }
 
     @Operation(
-            summary = "List Order",
-            description = "Retrieve list of all orders set by user at CANCELED state."
+            summary = "List canceled orders",
+            description = """
+                    Retrieve a list of all orders set by user at CANCELED state.
+                    
+                    - ADMIN or USER role required
+                    """
     )
     @ApiResponse(
             responseCode = "200",
-            description = "List returned"
+            description = "List of canceled orders returns"
     )
+    @GetMapping("/cancelled")
     public ResponseEntity<List<OrderResponse>> listOrdersCancelled(
             @AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseEntity.ok(orderService.getAllCanceled(userDetails.user()));

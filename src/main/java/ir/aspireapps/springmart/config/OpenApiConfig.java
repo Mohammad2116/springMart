@@ -28,16 +28,12 @@ public class OpenApiConfig {
                                 - Order Processing
                                 - User Management
                                 """))
-            .addSecurityItem(
-                    new SecurityRequirement()
-                            .addList("bearerAuth"))
 
             .components(
                 new Components()
                         .addSecuritySchemes(
-                                "Bearer Authentication",
+                                "bearer Authentication",
                                 new SecurityScheme()
-                                        .name("bearerAuth")
                                         .type(SecurityScheme.Type.HTTP)
                                         .scheme("bearer")
                                         .bearerFormat("JWT")

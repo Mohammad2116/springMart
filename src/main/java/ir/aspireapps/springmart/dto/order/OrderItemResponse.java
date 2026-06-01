@@ -11,7 +11,7 @@ public record OrderItemResponse(
         long id,
         @Schema(description = "Id of Product as a snapshot", example = "5")
         long productId,
-        @Schema(description = "Name of Product as a snapshot", example = "sample Product name")
+        @Schema(description = "Name of Product as a snapshot", example = "mouse")
         long productName,
         @Schema(description = "Quantity of product in order", example = "3")
         long quantity,

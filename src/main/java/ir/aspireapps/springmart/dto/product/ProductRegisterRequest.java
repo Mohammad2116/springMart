@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 
 @Schema(name = "ProductRegisterRequest", description = "Request used to create a new product")
 public record ProductRegisterRequest(
-        @Schema(description = "Product name", example = "Wireless Mouse")
+        @Schema(description = "Product name", example = "mouse")
         @NotBlank(message = "Product name can't be empty")
         @Size(min = 5, max = 255, message = "Product name must be between 5 to 255 characters")
         String name,
@@ -24,8 +24,8 @@ public record ProductRegisterRequest(
 
         @Schema(description = "Initial stock quantity", example = "100")
         @NotBlank(message = "Stock can't be empty")
-        @PositiveOrZero(message = "Stock can't be negtive")
-        @Max(value = 1000000, message = "Maximum amount of any product can't be more thant 1000000 items")
+        @PositiveOrZero(message = "Stock can't be negative")
+        @Max(value = 1000000, message = "Maximum amount of any product can't be more than 1000000 items")
         Long stock,
 
         @Schema(description = "Product price", example = "19.99")

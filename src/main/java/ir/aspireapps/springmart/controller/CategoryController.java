@@ -1,6 +1,7 @@
 package ir.aspireapps.springmart.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,6 +21,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(
@@ -39,8 +41,13 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @Operation(
-            summary = "Register category",
-            description = "Register a new category in system"
+            summary = "Register",
+            description = """
+                        Register a new category.
+                        
+                        Authorization:
+                        - ADMIN role required
+                        """
     )
     @ApiResponse(
             responseCode = "200",
@@ -49,13 +56,20 @@ public class CategoryController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping()
     public ResponseEntity<CategoryResponse> register(
+            @Parameter(
+                    description = "Category information to create."
+            )
             @NotNull @Valid @RequestBody CategoryCreateRequest request) {
         return ResponseEntity.status(HttpStatus.OK).body(categoryService.register(request));
     }
 
     @Operation(
-            summary = "Update category",
-            description = "Update category details"
+            summary = "Update",
+            description = """
+                          Update category details
+                          
+                          - ADMIN role required
+                          """
     )
     @ApiResponse(
             responseCode = "200",
@@ -64,14 +78,25 @@ public class CategoryController {
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<CategoryResponse> update(
+            @Parameter(
+                    description = "ID of target category to update",
+                    example = "5"
+            )
             @NotNull @Positive @PathVariable Long id,
+            @Parameter(
+                    description = "New details for category"
+            )
             @NotNull @Valid @RequestBody CategoryUpdateRequest request) {
         return ResponseEntity.status(HttpStatus.OK).body(categoryService.update(id, request));
     }
 
     @Operation(
-            summary = "Delete category",
-            description = "Soft delete sent category from system"
+            summary = "Delete",
+            description = """
+                        Make a soft delete operation on target category
+                        
+                        - ADMIN role required
+                        """
     )
     @ApiResponse(
             responseCode = "204",
@@ -80,6 +105,10 @@ public class CategoryController {
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
+            @Parameter(
+                    description = "ID of target category",
+                    example = "5"
+            )
             @NotNull @Positive @PathVariable Long id) {
         categoryService.delete(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
@@ -96,6 +125,10 @@ public class CategoryController {
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<CategoryResponse> get(
+            @Parameter(
+                    description = "Id of target category",
+                    example = "5"
+            )
             @NotNull @Positive @PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(
                 categoryService.get(id));
@@ -103,7 +136,11 @@ public class CategoryController {
 
     @Operation(
             summary = "Get All",
-            description = "Retrieve a list of all categories paged"
+            description = """
+                    Retrieve a list of all categories paged
+                    
+                    - ADMIN or USER role required
+                    """
     )
     @ApiResponse(
             responseCode = "200",
@@ -113,7 +150,7 @@ public class CategoryController {
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<Page<CategoryResponse>> getAll(
             @ParameterObject
-            @PageableDefault(size = 10, sort = "name")
+            @PageableDefault(page = 0, size = 10, sort = "name")
             Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK).body(
                 categoryService.getAll(pageable)
@@ -122,7 +159,11 @@ public class CategoryController {
 
     @Operation(
             summary = "Get full detailed",
-            description = "Retrive a details of a category included a list of all items in it's category"
+            description = """
+                    Retrieve a category included all items in it's category as a list"
+                    
+                    - ADMIN role required
+                    """
     )
     @ApiResponse(
             responseCode = "200",
@@ -131,6 +172,10 @@ public class CategoryController {
     @GetMapping("/{id}/full")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<CategoryFullResponse> getFull(
+            @Parameter(
+                    description = "Id of target category to collect information",
+                    example = "5"
+            )
             @NotNull @Positive @PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(
                 categoryService.getFull(id)

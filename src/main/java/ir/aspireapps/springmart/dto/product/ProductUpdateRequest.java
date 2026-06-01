@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 
 @Schema(name = "ProductUpdateRequest", description = "Request to update an existing product")
 public record ProductUpdateRequest(
-        @Schema(description = "Product name", example = "Wireless Mouse")
+        @Schema(description = "Product name", example = "mouse")
         @NotBlank(message = "Product name can't be empty")
         @Size(min = 5, max = 255, message = "Product name must be between 5 to 255 characters")
         String name,

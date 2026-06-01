@@ -1,6 +1,7 @@
 package ir.aspireapps.springmart.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -31,8 +32,12 @@ public class CartController {
     private final CartService cartService;
 
     @Operation(
-            summary = "Clear cart",
-            description = "Remove all products from cart"
+            summary = "Clear",
+            description = """
+                    Remove all products from cart
+                    
+                    - ADMIN or USER role required
+                    """
     )
     @ApiResponse(
             responseCode = "202",
@@ -45,8 +50,12 @@ public class CartController {
     }
 
     @Operation(
-            summary = "Get Cart",
-            description = "Get current cart details, and all items in it."
+            summary = "Get",
+            description = """
+                    Get current cart details, and all items of it.
+                    
+                    - ADMIN or USER role required
+                    """
     )
     @ApiResponse(
             responseCode = "201",
@@ -60,43 +69,71 @@ public class CartController {
 
     @Operation(
             summary = "Add product",
-            description = "Add a product to cart"
+            description = """
+                    Add a product to cart.
+                    
+                    - ADMIN or USER role required
+                    """
     )
     @ApiResponse(
             responseCode = "202",
             description = "Request Accepted"
     )
     @PutMapping("/{productId}/{quantity}")
-    public ResponseEntity<CartResponse> add(@Positive @PathVariable long productId,
-                                            @Positive @PathVariable long quantity,
-                                            @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<CartResponse> add(
+            @Parameter(
+                    description = "ID of the product to add to cart",
+                    example = "5"
+            )
+            @Positive @PathVariable long productId,
+            @Parameter(
+                    description = "Quantity of target product to add to the cart",
+                    example = "2"
+            )
+            @Positive @PathVariable long quantity,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(
                 cartService.add(userDetails.user(), productId, quantity));
     }
 
     @Operation(
             summary = "Remove product",
-            description = "remove the number of items in quantity from product in cart"
+            description = """
+                    remove some or all of quantities of a product in the cart
+                    
+                    - ADMIN or USER role required
+                    """
     )
     @ApiResponse(
             responseCode = "202",
             description = "Request Accepted"
     )
     @DeleteMapping("/{productId}/{quantity}")
-    public ResponseEntity<CartResponse> remove(@Positive @PathVariable long productId,
-                                               @Positive @PathVariable long quantity,
-                                               @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<CartResponse> remove(
+            @Parameter(
+                    description = "ID of the product to remove from the cart",
+                    example = "5"
+            )
+            @Positive @PathVariable long productId,
+            @Parameter(
+                   description = "Number of the product to remove from the cart",
+                    example = "2"
+            )
+            @Positive @PathVariable long quantity,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(
                 cartService.remove(userDetails.user(), productId, quantity));
     }
 
     @Operation(
             summary = "Checkout",
-            description = "Convert current cart to an order"
+            description = """
+                    Checkout the current cart and open an order based of it.
+                    """
     )
     @ApiResponse(
             responseCode = "201",
-            description = "Order created"
+            description = "OrderResponse fo the created order"
     )
     @PostMapping("/checkout")
     public ResponseEntity<OrderResponse> toOrder(@AuthenticationPrincipal CustomUserDetails userDetails) {

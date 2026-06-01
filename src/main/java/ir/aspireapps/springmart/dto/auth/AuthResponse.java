@@ -6,10 +6,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
         description = "Login success result contains tokens and expiration information")
 public record AuthResponse(
         @Schema(description =  "Very secure access token for next requests",
-                example = "Very-Secure-Token: djfkdsjfkslfjdsfjdksfjkds....")
+                example = "eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiVVNFUiIs...")
         String accessToken,
         @Schema(description = "Very secure refresh token for next logging in requests",
-                example = "Very-Secure-Token: dfsdkfjsdkfjskdf.....")
+                example = "oWHhPYtOmUR9omRExe2dX7OC9L1DY_CqoE2Lp0aXj...")
         String refreshToken,
         @Schema(description = "Type of token access security",
                 example = "bearer")

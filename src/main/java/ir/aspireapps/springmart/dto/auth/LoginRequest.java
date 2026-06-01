@@ -15,7 +15,7 @@ public record LoginRequest(
         String email,
 
         @Schema(description = "User password to log into system",
-                example = "xxxxxxxxxxxxxxx")
+                example = "P@ssw0rd!")
         @NotBlank(message = "Password can't be empty")
         @Size(max = 255, message = "Maximum size of password is 255 characters")
         String password

@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CartResponse {
-    @Schema(description = "Cart id", example = "123")
+    @Schema(description = "Cart id", example = "5")
     Long id;
     @Schema(description = "Cart owner details")
     UserResponse user;
