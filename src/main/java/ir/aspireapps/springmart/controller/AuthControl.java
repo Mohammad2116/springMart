@@ -1,9 +1,13 @@
 package ir.aspireapps.springmart.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import ir.aspireapps.springmart.dto.auth.AuthResponse;
 import ir.aspireapps.springmart.dto.auth.LoginRequest;
 import ir.aspireapps.springmart.dto.auth.LogoutRequest;
 import ir.aspireapps.springmart.dto.auth.RefreshRequest;
+import ir.aspireapps.springmart.dto.error.StandardErrors;
 import ir.aspireapps.springmart.dto.user.UserRegistrationRequest;
 import ir.aspireapps.springmart.security.CustomUserDetails;
 import ir.aspireapps.springmart.service.AuthService;
@@ -16,6 +20,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(
+        name = "Authentication",
+        description = "Authentication and JWT management"
+)
 @RestController
 @RequestMapping("/api/v1/auth")
 @CrossOrigin
@@ -23,6 +31,15 @@ import org.springframework.web.bind.annotation.*;
 public class AuthControl {
     private final AuthService authService;
 
+    @Operation(
+            summary = "Register a new user",
+            description = "Creates a new user account and returns access and refresh tokens."
+    )
+    @ApiResponse(
+            responseCode = "201",
+            description = "User successfully registered"
+    )
+    @StandardErrors
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody UserRegistrationRequest userRegistrationRequest,
                                                  HttpServletRequest httpServletRequest) {
@@ -33,6 +50,15 @@ public class AuthControl {
                         httpServletRequest.getRemoteAddr()));
     }
 
+    @Operation(
+            summary = "Login to user",
+            description = "Login a user into it's account."
+    )
+    @ApiResponse(
+            responseCode = "201",
+            description = "User successfully logged-in"
+    )
+    @StandardErrors
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest loginRequest,
                                               HttpServletRequest httpServletRequest) {
@@ -43,6 +69,15 @@ public class AuthControl {
                         httpServletRequest.getRemoteAddr()));
     }
 
+    @Operation(
+            summary = "Refresh Token",
+            description = "Refresh token and generate new ones ."
+    )
+    @ApiResponse(
+            responseCode = "201",
+            description = "Tokens successfully refreshed"
+    )
+    @StandardErrors
     @PostMapping("/refresh")
     public ResponseEntity<AuthResponse> refresh(@Valid @RequestBody RefreshRequest refreshRequest,
                                                 HttpServletRequest servletRequest) {
@@ -55,6 +90,15 @@ public class AuthControl {
         );
     }
 
+    @Operation(
+            summary = "Log out ",
+            description = "Logged out current device and invoked device's refresh token."
+    )
+    @ApiResponse(
+            responseCode = "201",
+            description = "User logged out successfully"
+    )
+    @StandardErrors
     @PostMapping("/logout")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<Void> logout(@Valid @RequestBody LogoutRequest request) {
@@ -62,6 +106,15 @@ public class AuthControl {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(
+            summary = "Log out all",
+            description = "Logged out all devices and invoked all refresh tokens."
+    )
+    @ApiResponse(
+            responseCode = "201",
+            description = "User logged out successfully"
+    )
+    @StandardErrors
     @PostMapping("/logout/all")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<Void> logoutAll(@AuthenticationPrincipal CustomUserDetails customUserDetails) {

@@ -24,7 +24,7 @@ public class OrderService {
     private final ProductRepository productRepository;
 
     @Transactional
-    public OrderResponse payed(User user, long id) {
+    public OrderResponse paid(User user, long id) {
         Order order = orderRepository.findByIdAndUserId(id, user.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Order id: " + id + " not found"));
 

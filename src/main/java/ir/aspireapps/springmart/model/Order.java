@@ -42,7 +42,7 @@ public class Order {
     private Instant updatedAt;
 
     @Column(name = "deleted_at")
-    private Instant canceled_at;
+    private Instant canceledAt;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "order")
     private List<OrderItem> items = new ArrayList<>();
