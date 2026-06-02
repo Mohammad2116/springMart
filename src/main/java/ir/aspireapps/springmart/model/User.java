@@ -9,6 +9,7 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,38 +32,47 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     @EqualsAndHashCode.Include
     @ToString.Include
-    UUID id;
+    private UUID id;
 
     @Column(unique = true, nullable = false)
-    String email;
+    private String email;
 
     @Column(nullable = false)
-    String password;
+    private String password;
 
     @Column(nullable = false)
     @ToString.Include
-    String firstName;
+    private String firstName;
     @Column(nullable = false)
     @ToString.Include
-    String lastName;
+    private String lastName;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    Role role;
+    private Role role;
 
     @Column(nullable = false)
-    Boolean enabled = true;
+    private Boolean enabled = true;
+
+    @Column(nullable = false)
+    private Boolean locked;
+    @Column(name = "locked_by")
+    private UUID lockedBy;
+    @Column(name = "locked_at")
+    private Instant lockedAt;
+    @Column(name = "lock_reason")
+    private String lockReason;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
-    LocalDateTime createdAt;
+    private LocalDateTime createdAt;
     @UpdateTimestamp
     @Column(name = "updated_at")
-    LocalDateTime updatedAt;
+    private LocalDateTime updatedAt;
     @Column(name = "password_updated_at")
-    LocalDateTime passwordUpdatedAt;
+    private LocalDateTime passwordUpdatedAt;
     @Column(name = "deleted_at")
-    LocalDateTime deletedAt;
+    private LocalDateTime deletedAt;
 
     @OneToOne
     @JoinColumn(name = "cart_id")

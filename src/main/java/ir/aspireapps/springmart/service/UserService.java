@@ -1,5 +1,6 @@
 package ir.aspireapps.springmart.service;
 
+import ir.aspireapps.springmart.dto.user.UserBlockRequest;
 import ir.aspireapps.springmart.dto.user.UserRegistrationRequest;
 import ir.aspireapps.springmart.dto.user.UserResponse;
 import ir.aspireapps.springmart.dto.user.UserUpdateDetailsRequest;
@@ -10,11 +11,14 @@ import ir.aspireapps.springmart.mapper.UserMapper;
 import ir.aspireapps.springmart.model.Role;
 import ir.aspireapps.springmart.model.User;
 import ir.aspireapps.springmart.repo.UserRepository;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @Service
@@ -60,5 +64,22 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User with Id[" + email + "] not found"));
         user.update(request);
         return userMapper.toResponse(user);
+    }
+
+    @Transactional
+    public void lock(UserBlockRequest request , UUID lockerUserID) {
+        User user = userRepository.findById(request.userId())
+                .orElseThrow(() -> new ResourceNotFoundException("User with Id[" + request.userId() + "] not found"));
+        user.setLocked(true);
+        user.setLockReason(request.reason());
+        user.setLockedAt(Instant.now());
+        user.setLockedBy(lockerUserID);
+    }
+
+    @Transactional
+    public void unlock(UUID id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User with Id[" + id + "] not found"));
+        user.setLocked(false);
     }
 }

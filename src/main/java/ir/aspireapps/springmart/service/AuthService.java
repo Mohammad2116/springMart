@@ -26,7 +26,6 @@ public class AuthService {
     private final RefreshTokenService refreshTokenService;
     private final AuthenticationManager authenticationManager;
 
-
     @Transactional
     public AuthResponse register(
             UserRegistrationRequest request, String deviceName, String deviceIP) {

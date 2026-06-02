@@ -10,6 +10,10 @@ import org.mapstruct.ReportingPolicy;
 @Mapper(componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.ERROR)
 public interface UserMapper {
+    @Mapping(target = "lockedBy", ignore = true)
+    @Mapping(target = "lockedAt", ignore = true)
+    @Mapping(target = "locked", ignore = true)
+    @Mapping(target = "lockReason", ignore = true)
     @Mapping(target = "orders", ignore = true)
     @Mapping(target = "enabled", ignore = true)
     @Mapping(target = "cart", ignore = true)

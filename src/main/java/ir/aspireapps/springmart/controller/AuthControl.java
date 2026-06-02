@@ -97,7 +97,7 @@ public class AuthControl {
                     description = "Refresh token request"
             )
             @Valid @RequestBody RefreshRequest refreshRequest,
-                                                HttpServletRequest servletRequest) {
+            HttpServletRequest servletRequest) {
         return ResponseEntity.ok(
                 authService.refresh(
                         refreshRequest,
