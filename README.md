@@ -124,6 +124,9 @@ The primary goal of this project is to demonstrate production-ready backend deve
 ### Database
 
 - PostgreSQL
+- Flyway
+- Database schema changes are managed through Flyway migrations.
+- Hibernate is configured in validate mode to ensure schema consistency.
 
 ### Authentication
 
@@ -172,18 +175,6 @@ PostgreSQL
 - Method-level authorization using `@PreAuthorize`
 - Centralized exception handling
 - Validation at API boundaries
-
----
-
-## API Documentation
-
-### Production Swagger UI
-
-https://springmart-backend-v2ux.onrender.com/swagger-ui/index.html
-
-### Local Swagger UI
-
-http://localhost:8080/swagger-ui/index.html
 
 ---
 
