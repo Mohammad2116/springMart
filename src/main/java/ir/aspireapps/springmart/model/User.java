@@ -55,7 +55,7 @@ public class User {
     private Boolean enabled = true;
 
     @Column(nullable = false)
-    private Boolean locked;
+    private Boolean locked = false;
     @Column(name = "locked_by")
     private UUID lockedBy;
     @Column(name = "locked_at")
