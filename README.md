@@ -1,5 +1,13 @@
 # SpringMart
 
+[![SpringMart CI](https://github.com/Mohammad2116/springMart/actions/workflows/ci.yml/badge.svg)](https://github.com/Mohammad2116/springMart/actions/workflows/ci.yml)
+![Java](https://img.shields.io/badge/Java-21-blue)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.5-brightgreen)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue)
+![Docker](https://img.shields.io/badge/Docker-Containerized-blue)
+![Render](https://img.shields.io/badge/Render-Deployed-success)
+![License](https://img.shields.io/badge/License-MIT-green)
+
 > Production-ready e-commerce backend built with Spring Boot, JWT Authentication, PostgreSQL, Docker, and deployed on Render.
 
 ## Project Highlights
@@ -29,6 +37,9 @@ https://springmart-backend-v2ux.onrender.com
 ### Swagger Documentation
 
 https://springmart-backend-v2ux.onrender.com/swagger-ui/index.html
+
+
+## CI/CD
 
 ---
 
@@ -242,7 +253,6 @@ The Docker build process executes the test suite before packaging the applicatio
 
 - Redis Caching
 - Testcontainers Integration
-- CI/CD Pipeline
 - Product Image Storage
 - Payment Gateway Integration
 - Order Shipment Tracking
