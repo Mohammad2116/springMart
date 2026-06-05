@@ -1,30 +1,16 @@
 # SpringMart
 
 [![SpringMart CI](https://github.com/Mohammad2116/springMart/actions/workflows/ci.yml/badge.svg)](https://github.com/Mohammad2116/springMart/actions/workflows/ci.yml)
+
 ![Java](https://img.shields.io/badge/Java-21-blue)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.5-brightgreen)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue)
+![Redis](https://img.shields.io/badge/Redis-Caching-red)
 ![Docker](https://img.shields.io/badge/Docker-Containerized-blue)
 ![Render](https://img.shields.io/badge/Render-Deployed-success)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
-> Production-ready e-commerce backend built with Spring Boot, JWT Authentication, PostgreSQL, Docker, and deployed on Render.
-
-## Project Highlights
-
-- Java 21
-- Spring Boot 3.5
-- Spring Security
-- JWT Authentication & Refresh Tokens
-- Role-Based Authorization (USER / ADMIN)
-- PostgreSQL
-- Spring Data JPA & Hibernate
-- OpenAPI 3 / Swagger UI
-- Dockerized (Multi-Stage Build)
-- Cloud Deployment on Render
-- Global Exception Handling
-- Request Validation
-- Production-Ready REST API
+> Production-ready e-commerce backend built with Spring Boot, JWT Authentication, PostgreSQL, Redis, Flyway, Docker, GitHub Actions CI, and deployed on Render.
 
 ---
 
@@ -34,22 +20,30 @@
 
 https://springmart-backend-v2ux.onrender.com
 
-### Swagger Documentation
+### Swagger UI
 
 https://springmart-backend-v2ux.onrender.com/swagger-ui/index.html
-
-
-## CI/CD
 
 ---
 
 ## Overview
 
-SpringMart is a secure and extensible e-commerce backend built with Spring Boot.
+SpringMart is a modern e-commerce backend application built with Spring Boot.
 
-The project provides a RESTful API for authentication, user management, product catalog management, shopping carts, and order processing. It follows modern backend development practices including JWT-based authentication, role-based authorization, validation, exception handling, API documentation, containerization, and cloud deployment.
+The project demonstrates real-world backend engineering practices including:
 
-The primary goal of this project is to demonstrate production-ready backend development using the Spring ecosystem.
+- JWT-based Authentication
+- Role-based Authorization
+- RESTful API Design
+- Global Exception Handling
+- Validation
+- Database Versioning with Flyway
+- Redis Caching
+- Docker Containerization
+- CI/CD using GitHub Actions
+- Cloud Deployment on Render
+
+The goal of this project is to showcase production-oriented backend development using the Spring ecosystem.
 
 ---
 
@@ -59,11 +53,11 @@ The primary goal of this project is to demonstrate production-ready backend deve
 
 - JWT Access Token Authentication
 - Refresh Token Support
-- Logout from Current Device
-- Logout from All Devices
+- Logout Current Session
+- Logout All Sessions
 - Stateless Security Architecture
 - Role-Based Authorization (USER / ADMIN)
-- Account Lock / Unlock Management
+- Account Lock / Unlock Support
 - Global Exception Handling
 - Request Validation
 
@@ -71,36 +65,38 @@ The primary goal of this project is to demonstrate production-ready backend deve
 
 - User Registration
 - User Profile Retrieval
-- User Profile Updates
+- User Profile Update
 - Administrative User Management
-- User Account Locking / Unlocking
+- User Lock / Unlock Operations
 
-### Product Catalog
+### Product Management
 
 - Create Products
 - Update Products
 - Delete Products
-- Browse Products
-- Search Products by Name
-- Filter Products by Category
-- Pagination Support
+- Product Search
+- Category Filtering
+- Pagination & Sorting
+- Soft Delete Support
 
-### Categories
+### Category Management
 
 - Create Categories
 - Update Categories
 - Delete Categories
-- Hierarchical Category Structure
+- Category Details Retrieval
+- Full Category View
+- Redis-Cached Category Queries
 
 ### Shopping Cart
 
-- Add Products to Cart
-- Remove Products from Cart
+- Add Product to Cart
+- Remove Product from Cart
 - Clear Cart
-- View Cart Contents
-- Convert Cart into Orders
+- View Cart
+- Convert Cart into Order
 
-### Orders
+### Order Management
 
 - Create Orders
 - View Order History
@@ -124,30 +120,30 @@ The primary goal of this project is to demonstrate production-ready backend deve
 ### Database
 
 - PostgreSQL
-- Flyway
-- Database schema changes are managed through Flyway migrations.
-- Hibernate is configured in validate mode to ensure schema consistency.
+- Flyway Migration Tool
 
-### Authentication
+### Cache
 
-- JWT (JJWT)
+- Redis
+- Spring Cache
 
-### Documentation
+### API Documentation
 
 - OpenAPI 3
 - Swagger UI
 
-### Development Tools
+### Build Tools
 
 - Maven
 - Lombok
 - MapStruct
 
-### Deployment
+### DevOps
 
 - Docker
 - Multi-Stage Docker Build
-- Render Cloud Platform
+- GitHub Actions
+- Render
 
 ---
 
@@ -160,6 +156,8 @@ Controllers
   ↓
 Services
   ↓
+Redis Cache
+  ↓
 Repositories
   ↓
 PostgreSQL
@@ -167,14 +165,54 @@ PostgreSQL
 
 ### Architectural Principles
 
-- Clear separation of concerns
-- DTO-based API contracts
-- Service-layer business logic
-- Repository abstraction for persistence
-- Stateless JWT authentication
-- Method-level authorization using `@PreAuthorize`
-- Centralized exception handling
-- Validation at API boundaries
+- Layered Architecture
+- Separation of Concerns
+- DTO-based API Contracts
+- Service-Layer Business Logic
+- Repository Pattern
+- Stateless Authentication
+- Method-Level Authorization
+- Centralized Error Handling
+- Validation at API Boundaries
+
+### Architecture Highlights
+
+- Soft Delete using Hibernate
+- Redis Cache Integration
+- Flyway Database Versioning
+- OpenAPI Documentation
+- Dockerized Deployment
+- CI Pipeline with GitHub Actions
+
+---
+
+## Redis Caching
+
+SpringMart uses Redis through Spring Cache abstraction.
+
+Currently cached resources:
+
+- Category Details
+- Category Full Details
+
+Implemented cache operations:
+
+- Cache Read (`@Cacheable`)
+- Cache Update (`@CachePut`)
+- Cache Eviction (`@CacheEvict`)
+
+---
+
+## CI/CD
+
+GitHub Actions automatically:
+
+- Builds the application
+- Executes tests
+- Validates Maven build integrity
+- Prevents broken code from reaching the main branch
+
+Workflow status is displayed by the badge at the top of this README.
 
 ---
 
@@ -185,6 +223,7 @@ PostgreSQL
 - Java 21+
 - Maven 3.9+
 - PostgreSQL
+- Redis
 
 ### Build
 
@@ -202,35 +241,60 @@ mvn spring-boot:run
 
 ## Running with Docker
 
-### Build Docker Image
+### Build Image
 
 ```bash
 docker build -t springmart .
 ```
 
-### Run Docker Container
+### Run Application
 
 ```bash
 docker run -p 8080:8080 springmart
 ```
 
-### Multi-Stage Build
+### Run Redis
+
+```bash
+docker run -d --name redis -p 6379:6379 redis:latest
+```
+
+### Multi-Stage Docker Build
 
 The project uses a multi-stage Docker build to reduce image size and improve deployment efficiency.
 
 ---
 
+## Database Versioning
+
+Flyway is used to manage schema evolution.
+
+Benefits:
+
+- Version-controlled database changes
+- Repeatable deployments
+- Safer production releases
+- Consistent environments
+
+---
+
 ## Deployment
 
-SpringMart is deployed on Render using Docker.
+The application is deployed on Render using Docker.
 
 Production URL:
 
 https://springmart-backend-v2ux.onrender.com
 
+Swagger URL:
+
+https://springmart-backend-v2ux.onrender.com/swagger-ui/index.html
+
 ---
 
 ## Testing
+
+Run tests:
 
 ```bash
 mvn test
@@ -242,13 +306,14 @@ The Docker build process executes the test suite before packaging the applicatio
 
 ## Future Improvements
 
-- Redis Caching
 - Testcontainers Integration
 - Product Image Storage
 - Payment Gateway Integration
-- Order Shipment Tracking
+- Shipment Tracking
 - Email Notifications
 - Audit Logging
+- Redis Caching for Paginated Responses
+- Monitoring with Spring Boot Actuator
 
 ---
 
