@@ -130,8 +130,11 @@ public class CategoryController {
                     example = "5"
             )
             @NotNull @Positive @PathVariable Long id) {
+        CategoryResponse response = categoryService.get(id);
+        System.out.println(response);
         return ResponseEntity.status(HttpStatus.OK).body(
-                categoryService.get(id));
+                response
+                );
     }
 
     @Operation(
