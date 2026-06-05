@@ -14,6 +14,10 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
-@PreAuthorize("hasRole('ADMIN')")
 @RequiredArgsConstructor
 public class CategoryService {
     private final CategoryMapper categoryMapper;
@@ -38,6 +41,12 @@ public class CategoryService {
     }
 
     @Transactional
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "categories", key = "#id"),
+                    @CacheEvict(value = "category-full", key = "#id")
+            }
+    )
     public CategoryResponse update(@NotNull @Positive Long id,
                                    @NotNull @Valid CategoryUpdateRequest request) {
         Category category = categoryRepository.findById(id)
@@ -46,13 +55,22 @@ public class CategoryService {
         return categoryMapper.toResponse(category);
     }
 
+    @Transactional
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "categories", key = "#id"),
+                    @CacheEvict(value = "category-full", key = "#id")
+            }
+    )
     public void delete(@NotNull @Positive Long id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Category with Id: " + id + " not found"));
         categoryRepository.delete(category);
     }
 
+    @Cacheable(value = "categories", key = "#id")
     public CategoryResponse get(@NotNull @Positive Long id) {
+        System.out.println("Loading category from database...");
         return categoryMapper.toResponse(
                 categoryRepository.findById(id)
                         .orElseThrow(() -> new ResourceNotFoundException("Category with Id: " + id + " not found"))
@@ -67,6 +85,7 @@ public class CategoryService {
                 .map(categoryMapper::toResponse);
     }
 
+    @Cacheable(value = "category-full", key="#id")
     public CategoryFullResponse getFull(@NotNull @Positive Long id) {
         return categoryMapper.toResponseFull(
                 categoryRepository.findById(id)
