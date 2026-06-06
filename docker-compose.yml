@@ -12,14 +12,21 @@ services:
     ports:
       - "5432:5432"
 
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
     restart: unless-stopped
 
   redis:
     image: redis:8
     container_name: springmart_redis
 
+    command: redis-server --appendonly yes
+
     ports:
       - "6379:6379"
+    volumes:
+      - redis_data:/data
 
     restart: unless-stopped
 
@@ -43,3 +50,8 @@ services:
       - "8080:8080"
 
     restart: unless-stopped
+
+
+volumes:
+  postgres_data:
+  redis_data:
