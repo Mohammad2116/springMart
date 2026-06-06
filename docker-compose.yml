@@ -1,0 +1,45 @@
+services:
+
+  postgres:
+    image: postgres:17
+    container_name: springmart-postgres
+
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+    ports:
+      - "5432:5432"
+
+    restart: unless-stopped
+
+  redis:
+    image: redis:8
+    container_name: springmart_redis
+
+    ports:
+      - "6379:6379"
+
+    restart: unless-stopped
+
+  app:
+    build: .
+    container_name: springmart-app
+
+    environment:
+      SpringMart_DB_URL: ${SpringMart_DB_URL_DOCKER}
+      SpringMart_DB_USERNAME: ${SpringMart_DB_USERNAME}
+      SpringMart_DB_PASSWORD: ${SpringMart_DB_PASSWORD}
+
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+
+    depends_on:
+      - postgres
+      - redis
+
+    ports:
+      - "8080:8080"
+
+    restart: unless-stopped
