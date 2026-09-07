@@ -264,21 +264,6 @@ Benefits:
 - Safer production releases
 - Consistent environments
 
----
-
-## Deployment
-
-The application is deployed on Render using Docker.
-
-Production URL:
-
-https://springmart-backend-v2ux.onrender.com
-
-Swagger URL:
-
-https://springmart-backend-v2ux.onrender.com/swagger-ui/index.html
-
----
 
 ## Testing
 
