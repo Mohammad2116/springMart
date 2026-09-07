@@ -12,19 +12,7 @@
 
 > Production-ready e-commerce backend built with Spring Boot, JWT Authentication, PostgreSQL, Redis, Flyway, Docker, GitHub Actions CI, and deployed on Render.
 
----
 
-## Live Demo
-
-### Production API
-
-https://springmart-backend-v2ux.onrender.com
-
-### Swagger UI
-
-https://springmart-backend-v2ux.onrender.com/swagger-ui/index.html
-
----
 
 ## Overview
 
